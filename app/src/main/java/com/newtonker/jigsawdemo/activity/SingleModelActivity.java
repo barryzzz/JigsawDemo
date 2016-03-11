@@ -201,10 +201,10 @@ public class SingleModelActivity extends Activity
         {
         case PHOTO_PICKED_WITH_DATA:
             String path = FileUtils.getPath(this, data.getData());
-            // 替代之前的图片
+            // 替代之前的图片路径
             selectedPaths.add(curPosition, path);
             selectedPaths.remove(curPosition + 1);
-
+            // 设置新的图片
             modelArea.replaceSelectedBitmap(path);
             break;
         default:
