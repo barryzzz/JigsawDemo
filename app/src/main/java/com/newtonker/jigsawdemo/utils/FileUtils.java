@@ -18,19 +18,19 @@ public class FileUtils
     /**
      * view to bitmap
      *
-     * @param v
+     * @param view
      * @return
      */
-    public static Bitmap createBitmapFromView(View v)
+    public static Bitmap createBitmapFromView(View view)
     {
-        if (null == v)
+        if (null == view)
         {
             return null;
         }
 
-        Bitmap bm = Bitmap.createBitmap(v.getWidth(), v.getHeight(), Bitmap.Config.ARGB_8888);
+        Bitmap bm = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bm);
-        v.draw(canvas);
+        view.draw(canvas);
 
         return bm;
     }
@@ -68,8 +68,6 @@ public class FileUtils
                 {
                     return Environment.getExternalStorageDirectory() + "/" + split[1];
                 }
-
-                // TODO handle non-primary volumes
             }
             // DownloadsProvider
             else if (isDownloadsDocument(uri))
@@ -164,7 +162,6 @@ public class FileUtils
         return null;
     }
 
-
     /**
      * @param uri The Uri to check.
      * @return Whether the Uri authority is ExternalStorageProvider.
@@ -200,6 +197,4 @@ public class FileUtils
     {
         return "com.google.android.apps.photos.content".equals(uri.getAuthority());
     }
-
-
 }

@@ -22,7 +22,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activity.SingleModelActivity"
+            android:name=".activity.JigsawModelActivity"
             android:screenOrientation="portrait" />
 
     </application>

@@ -1,8 +1,8 @@
 package com.newtonker.jigsawdemo.utils;
 
 import android.content.Context;
-import android.util.SparseArray;
 
+import com.newtonker.jigsawdemo.model.JigsawType;
 import com.newtonker.jigsawdemo.model.TemplateEntity;
 
 import org.xmlpull.v1.XmlPullParser;
@@ -12,11 +12,12 @@ import org.xmlpull.v1.XmlPullParserFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class ParserHelper
 {
-    private static SparseArray<List<TemplateEntity>> mEntityList;
+    private static HashMap<JigsawType, List<TemplateEntity>> mEntityHashMap;
 
     private static ParserHelper instance;
 
@@ -39,7 +40,7 @@ public class ParserHelper
     {
         try
         {
-            mEntityList = parseXml(context.getAssets().open("templates.xml"));
+            mEntityHashMap = parseXml(context.getAssets().open("templates.xml"));
         }
         catch (IOException e)
         {
@@ -47,14 +48,14 @@ public class ParserHelper
         }
     }
 
-    public List<TemplateEntity> getEntityList(int type)
+    public List<TemplateEntity> getEntityList(JigsawType type)
     {
-        if(null == mEntityList)
+        if(null == mEntityHashMap)
         {
             return null;
         }
 
-        return mEntityList.get(type);
+        return mEntityHashMap.get(type);
     }
 
     /**
@@ -62,7 +63,7 @@ public class ParserHelper
      * @param is
      * @return
      */
-    private static SparseArray<List<TemplateEntity>> parseXml(InputStream is)
+    private static HashMap<JigsawType, List<TemplateEntity>> parseXml(InputStream is)
     {
         List<TemplateEntity> entityList = new ArrayList<>();
         try
@@ -125,7 +126,7 @@ public class ParserHelper
         }
 
         // 对list解析，并放到SparseArray中
-        SparseArray<List<TemplateEntity>> sparseArray = new SparseArray<>();
+        HashMap<JigsawType, List<TemplateEntity>> hashMap = new HashMap<>();
 
         List<TemplateEntity> tempList0 = new ArrayList<>();
         List<TemplateEntity> tempList1 = new ArrayList<>();
@@ -154,11 +155,11 @@ public class ParserHelper
         }
 
         // 在循环结束后将模版的集合按照键值对方式存放
-        sparseArray.append(0, tempList0);
-        sparseArray.append(1, tempList1);
-        sparseArray.append(2, tempList2);
-        sparseArray.append(3, tempList3);
+        hashMap.put(JigsawType.ONE_PHOTO, tempList0);
+        hashMap.put(JigsawType.TWO_PHOTO, tempList1);
+        hashMap.put(JigsawType.THREE_PHOTO, tempList2);
+        hashMap.put(JigsawType.FOUR_PHOTO, tempList3);
 
-        return sparseArray;
+        return hashMap;
     }
 }

@@ -2,6 +2,7 @@ package com.newtonker.jigsawdemo.utils;
 
 import android.content.Context;
 
+import com.newtonker.jigsawdemo.model.JigsawType;
 import com.newtonker.jigsawdemo.model.TemplateEntity;
 import com.newtonker.jigsawdemo.widget.TouchSlotLayout;
 
@@ -17,9 +18,9 @@ public class TemplateUtils
      * @param paths
      * @return
      */
-    public static List<TouchSlotLayout> getSlotLayoutList(Context context, int type, List<String> paths)
+    public static List<TouchSlotLayout> getSlotLayoutList(Context context, JigsawType type, List<String> paths)
     {
-        if(type < 0 || type > 3 || null == paths)
+        if(null == type || null == paths)
         {
             return null;
         }
@@ -52,9 +53,9 @@ public class TemplateUtils
      * @param position
      * @return
      */
-    public static TemplateEntity getEntity(Context context, int type, int position)
+    public static TemplateEntity getEntity(Context context, JigsawType type, int position)
     {
-        if(type < 0 || type > 3)
+        if(null == type)
         {
             return null;
         }
@@ -67,4 +68,34 @@ public class TemplateUtils
 
         return entities.get(position);
     }
+
+    /**
+     * 根据size大小判断JigsawType值
+     * @param size
+     * @return
+     */
+    public static JigsawType getJigsawType(int size)
+    {
+        JigsawType jigsawType = null;
+        switch(size)
+        {
+        case 1:
+            jigsawType = JigsawType.ONE_PHOTO;
+            break;
+        case 2:
+            jigsawType = JigsawType.TWO_PHOTO;
+            break;
+        case 3:
+            jigsawType = JigsawType.THREE_PHOTO;
+            break;
+        case 4:
+            jigsawType = JigsawType.FOUR_PHOTO;
+            break;
+        default:
+            break;
+        }
+
+        return jigsawType;
+    }
+
 }

@@ -17,6 +17,7 @@ import com.newtonker.jigsawdemo.R;
 import com.newtonker.jigsawdemo.constants.FileConstants;
 import com.newtonker.jigsawdemo.event.OnFilterItemClickListener;
 import com.newtonker.jigsawdemo.event.OnItemClickListener;
+import com.newtonker.jigsawdemo.model.JigsawType;
 import com.newtonker.jigsawdemo.model.TemplateEntity;
 import com.newtonker.jigsawdemo.utils.FileUtils;
 import com.newtonker.jigsawdemo.utils.TemplateUtils;
@@ -37,17 +38,17 @@ import jp.co.cyberagent.android.gpuimage.GPUImage;
 import jp.co.cyberagent.android.gpuimage.GPUImageFilter;
 
 /**
- * 对生成拼图操作Activity
+ * 单个拼图模板修饰界面
  */
-public class SingleModelActivity extends Activity
+public class JigsawModelActivity extends Activity
 {
     private static final int PHOTO_PICKED_WITH_DATA = 1000;
     // 拼图为正方形，宽高比为1.0f
     private static final float JIGSAW_MODEL_RATIO = 1.0f;
 
-    private ArrayList<String> selectedPaths;
-    private int numOfSlots;
     private int idOfTemplate;
+    private JigsawType jigsawType;
+    private ArrayList<String> selectedPaths;
 
     // 当前选中的图片位置
     private int curPosition;
@@ -65,7 +66,7 @@ public class SingleModelActivity extends Activity
 
         Intent intent = getIntent();
         selectedPaths = intent.getStringArrayListExtra(SelectPhotoActivity.SELECTED_PATHS);
-        numOfSlots = intent.getIntExtra(SelectPhotoActivity.NUM_OF_SLOTS, 0);
+        jigsawType = (JigsawType) intent.getSerializableExtra(SelectPhotoActivity.TYPE_OF_JIGSAW);
         idOfTemplate = intent.getIntExtra(SelectPhotoActivity.ID_OF_TEMPLATE, 0);
 
         initView();
@@ -119,7 +120,7 @@ public class SingleModelActivity extends Activity
         // 拼图区域
         modelArea = (TouchSlotLayout) findViewById(R.id.single_model_area);
         // 创建模板
-        TemplateEntity entity = TemplateUtils.getEntity(this, numOfSlots - 1, idOfTemplate);
+        TemplateEntity entity = TemplateUtils.getEntity(this, jigsawType, idOfTemplate);
         modelArea.setImagePathList(selectedPaths);
         modelArea.setTemplateEntity(entity);
 
@@ -171,7 +172,7 @@ public class SingleModelActivity extends Activity
             public void onClick(View v)
             {
                 // 退出
-                SingleModelActivity.this.finish();
+                JigsawModelActivity.this.finish();
             }
         });
 
@@ -243,7 +244,7 @@ public class SingleModelActivity extends Activity
         protected void onPreExecute()
         {
             // 先生成滤镜效果的主类
-            gpuImage = new GPUImage(SingleModelActivity.this);
+            gpuImage = new GPUImage(JigsawModelActivity.this);
         }
 
         @Override
@@ -305,12 +306,12 @@ public class SingleModelActivity extends Activity
             if (null == path)
             {
                 // 保存失败
-                Toast.makeText(SingleModelActivity.this, "Save Failed!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(JigsawModelActivity.this, "Save Failed!", Toast.LENGTH_SHORT).show();
             }
             else
             {
                 // 保存成功
-                Toast.makeText(SingleModelActivity.this, "Save succeed! Path: " + path, Toast.LENGTH_SHORT).show();
+                Toast.makeText(JigsawModelActivity.this, "Save succeed! Path: " + path, Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -361,7 +362,7 @@ public class SingleModelActivity extends Activity
             Intent mediaScannerIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
             final Uri fileContentUri = Uri.fromFile(file);
             mediaScannerIntent.setData(fileContentUri);
-            SingleModelActivity.this.sendBroadcast(mediaScannerIntent);
+            JigsawModelActivity.this.sendBroadcast(mediaScannerIntent);
 
             return file.getAbsolutePath();
         }

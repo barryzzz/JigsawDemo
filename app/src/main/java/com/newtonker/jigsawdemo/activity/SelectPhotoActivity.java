@@ -22,6 +22,7 @@ import com.newtonker.jigsawdemo.adapter.PopupDirectoryListAdapter;
 import com.newtonker.jigsawdemo.event.OnItemCheckListener;
 import com.newtonker.jigsawdemo.event.OnModelItemClickListener;
 import com.newtonker.jigsawdemo.event.OnPhotoCheckedChangeListener;
+import com.newtonker.jigsawdemo.model.JigsawType;
 import com.newtonker.jigsawdemo.model.Photo;
 import com.newtonker.jigsawdemo.model.PhotoDirectory;
 import com.newtonker.jigsawdemo.utils.MediaStoreHelper;
@@ -40,10 +41,10 @@ public class SelectPhotoActivity extends AppCompatActivity
     // 拼图最多可用图片张数
     public final static int DEFAULT_MAX_COUNT = 4;
     public final static String SELECTED_PATHS = "selected_paths";
-    public final static String NUM_OF_SLOTS = "num_of_slots";
+    public final static String TYPE_OF_JIGSAW = "type_of_jigsaw";
     public final static String ID_OF_TEMPLATE = "id_of_template";
-    // 注入的图片数量
-    private int numOfSlots = 0;
+    // 当前拼图模板的类型
+    private JigsawType jigsawType;
     // 最多可用图片数目
     private int maxCount = DEFAULT_MAX_COUNT;
     // 图片展示组件
@@ -99,9 +100,9 @@ public class SelectPhotoActivity extends AppCompatActivity
             public void onClick(View view, int position)
             {
                 // 跳转到另一个界面去操作
-                Intent intent = new Intent(SelectPhotoActivity.this, SingleModelActivity.class);
+                Intent intent = new Intent(SelectPhotoActivity.this, JigsawModelActivity.class);
                 intent.putStringArrayListExtra(SELECTED_PATHS, selectedPhotosPath);
-                intent.putExtra(NUM_OF_SLOTS, numOfSlots);
+                intent.putExtra(TYPE_OF_JIGSAW, jigsawType);
                 intent.putExtra(ID_OF_TEMPLATE, position);
                 startActivity(intent);
             }
@@ -141,10 +142,9 @@ public class SelectPhotoActivity extends AppCompatActivity
                 selectedPhotosPath.addAll(paths);
 
                 // 刷新拼图列表
-                numOfSlots = selectedPhotosPath.size();
-                int type = numOfSlots - 1;
+                jigsawType = TemplateUtils.getJigsawType(selectedPhotosPath.size());
 
-                List<TouchSlotLayout> models = TemplateUtils.getSlotLayoutList(SelectPhotoActivity.this, type, selectedPhotosPath);
+                List<TouchSlotLayout> models = TemplateUtils.getSlotLayoutList(SelectPhotoActivity.this, jigsawType, selectedPhotosPath);
 
                 modelLinearAdapter.setModels(models);
                 modelLinearAdapter.notifyDataSetChanged();
