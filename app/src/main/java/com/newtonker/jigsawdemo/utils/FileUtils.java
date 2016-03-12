@@ -21,7 +21,7 @@ public class FileUtils
      * @param v
      * @return
      */
-    public static Bitmap loadBitmapFromView(View v)
+    public static Bitmap createBitmapFromView(View v)
     {
         if (null == v)
         {

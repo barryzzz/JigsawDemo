@@ -282,7 +282,7 @@ public class SingleModelActivity extends Activity
             try
             {
                 //获取图片
-                Bitmap targetBitmap = FileUtils.loadBitmapFromView(modelArea);
+                Bitmap targetBitmap = FileUtils.createBitmapFromView(modelArea);
                 // 保存图片到本地
                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault());
                 Date curTime = new Date();
