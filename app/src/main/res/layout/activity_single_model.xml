@@ -14,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.newtonker.jigsawdemo.widget.TouchSlotLayout
+        <com.newtonker.jigsawdemo.widget.JigsawModelLayout
             android:id="@+id/single_model_area"
             android:layout_width="360dp"
             android:layout_height="360dp"

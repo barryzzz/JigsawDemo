@@ -56,9 +56,9 @@ public class JigsawPopupWindow extends PopupWindow
         setWidth(ViewGroup.LayoutParams.MATCH_PARENT);
         setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
         setFocusable(false);
-        // 这句用来设置是否有悬浮效果
+        // 设置是否有悬浮效果
 //        setBackgroundDrawable(new BitmapDrawable());
-        // 设置是否点击PopupWindow外退出PopupWindow，启用后，边框绘制无法实现
+        // 设置是否点击PopupWindow外退出PopupWindow，启用后，图片选中效果无法绘制
 //        setOutsideTouchable(true);
 
         init(contentView);
@@ -112,9 +112,6 @@ public class JigsawPopupWindow extends PopupWindow
         int itemWidth = DisplayUtils.dp2px(context, ITEM_PS_FILTER_WIDTH_IN_DP);
         // 减掉一个选图占用的位置
         int middleX = (DisplayUtils.getScreenWidth(context) - itemWidth) / 2;
-
-        // 如果要smooth滑动，则继续进行下面的计算，如果不需要smooth滑动，直接用注释的方法就行
-        //        mLayoutManager.scrollToPositionWithOffset(position, middleX - itemWidth / 2);
         int offset = recyclerView.computeHorizontalScrollOffset();
         int selectedOffset = itemWidth * position + itemWidth / 2;
         int x = selectedOffset - offset - middleX;

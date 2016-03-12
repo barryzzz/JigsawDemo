@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import com.newtonker.jigsawdemo.R;
 import com.newtonker.jigsawdemo.event.OnModelItemClickListener;
 import com.newtonker.jigsawdemo.widget.JigsawFrameLayout;
-import com.newtonker.jigsawdemo.widget.TouchSlotLayout;
+import com.newtonker.jigsawdemo.widget.JigsawModelLayout;
 
 import java.util.List;
 
@@ -20,7 +20,7 @@ import java.util.List;
 public class ModelLinearAdapter extends RecyclerView.Adapter<ModelLinearAdapter.ViewHolder>
 {
     private LayoutInflater inflater;
-    private List<TouchSlotLayout> models;
+    private List<JigsawModelLayout> models;
 
     private OnModelItemClickListener onModelItemClickListener;
 
@@ -73,7 +73,7 @@ public class ModelLinearAdapter extends RecyclerView.Adapter<ModelLinearAdapter.
         }
     }
 
-    public void setModels(List<TouchSlotLayout> models)
+    public void setModels(List<JigsawModelLayout> models)
     {
         this.models = models;
     }

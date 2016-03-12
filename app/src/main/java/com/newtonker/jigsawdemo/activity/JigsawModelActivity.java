@@ -22,7 +22,7 @@ import com.newtonker.jigsawdemo.model.TemplateEntity;
 import com.newtonker.jigsawdemo.utils.FileUtils;
 import com.newtonker.jigsawdemo.utils.TemplateUtils;
 import com.newtonker.jigsawdemo.widget.JigsawLinearLayout;
-import com.newtonker.jigsawdemo.widget.TouchSlotLayout;
+import com.newtonker.jigsawdemo.widget.JigsawModelLayout;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -55,8 +55,8 @@ public class JigsawModelActivity extends Activity
 
     private int modelAreaParentWidth;
     private int modelAreaParentHeight;
+    private JigsawModelLayout modelArea;
     private RelativeLayout modelAreaParent;
-    private TouchSlotLayout modelArea;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -118,7 +118,7 @@ public class JigsawModelActivity extends Activity
         });
 
         // 拼图区域
-        modelArea = (TouchSlotLayout) findViewById(R.id.single_model_area);
+        modelArea = (JigsawModelLayout) findViewById(R.id.single_model_area);
         // 创建模板
         TemplateEntity entity = TemplateUtils.getEntity(this, jigsawType, idOfTemplate);
         modelArea.setImagePathList(selectedPaths);
@@ -256,9 +256,8 @@ public class JigsawModelActivity extends Activity
             }
 
             gpuImage.setFilter(filter);
-            gpuImage.setImage(bitmap);
 
-            return gpuImage.getBitmapWithFilterApplied();
+            return gpuImage.getBitmapWithFilterApplied(bitmap);
         }
 
         @Override
@@ -317,13 +316,13 @@ public class JigsawModelActivity extends Activity
     }
 
     /**
-     * 根据路径和文件名保存文件（优化代码结构）
+     * 根据路径和文件名保存文件
      *
      * @param folderName
      * @param fileName
      * @param bm
      */
-    private String saveImage(final String folderName, final String fileName, Bitmap bm)
+    private String saveImage(String folderName, String fileName, Bitmap bm)
     {
         if (null == bm)
         {
@@ -354,9 +353,7 @@ public class JigsawModelActivity extends Activity
             if (!bm.isRecycled())
             {
                 bm.recycle();
-                bm = null;
             }
-            System.gc();
 
             // 扫描新增图片文件
             Intent mediaScannerIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);

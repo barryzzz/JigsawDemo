@@ -28,7 +28,7 @@ import java.util.List;
 
 import jp.co.cyberagent.android.gpuimage.GPUImageFilter;
 
-public class TouchSlotLayout extends RelativeLayout
+public class JigsawModelLayout extends RelativeLayout
 {
     private static final float DRAG_SCALE = 1.05f;
 
@@ -37,7 +37,7 @@ public class TouchSlotLayout extends RelativeLayout
     // 记录当前的选中框
     private Rect curRect;
     // 当前选中的组件
-    private TouchSlotView curSlotView;
+    private JigsawModelView curModelView;
     // 当前选中的图片的id
     private int curSelection;
     // 记录当前的显示状态
@@ -52,7 +52,7 @@ public class TouchSlotLayout extends RelativeLayout
     private List<Bundle> bundleList;
     // 缓存TouchSlotView的坐标
     private List<Rect> boundaryList;
-    private List<TouchSlotView> slotViewList;
+    private List<JigsawModelView> modelViewList;
 
     // 点击时候的X位置
     private int downX;
@@ -73,7 +73,7 @@ public class TouchSlotLayout extends RelativeLayout
     private WindowManager windowManager;
     private WindowManager.LayoutParams windowParams;
 
-    public TouchSlotLayout(Context context)
+    public JigsawModelLayout(Context context)
     {
         super(context);
         this.context = context;
@@ -85,7 +85,7 @@ public class TouchSlotLayout extends RelativeLayout
     // 这个构造方法在显示一组拼图列表时使用
     // 展示单个拼图模板，用其他三个
     // 当显示一组拼图列表时，如果初始化popupWindow，比较耗时，会出错
-    public TouchSlotLayout(Context context, boolean showPopup)
+    public JigsawModelLayout(Context context, boolean showPopup)
     {
         super(context);
         this.context = context;
@@ -94,7 +94,7 @@ public class TouchSlotLayout extends RelativeLayout
         init(showPopup);
     }
 
-    public TouchSlotLayout(Context context, AttributeSet attrs)
+    public JigsawModelLayout(Context context, AttributeSet attrs)
     {
         super(context, attrs);
         this.context = context;
@@ -103,7 +103,7 @@ public class TouchSlotLayout extends RelativeLayout
         init(true);
     }
 
-    public TouchSlotLayout(Context context, AttributeSet attrs, int defStyleAttr)
+    public JigsawModelLayout(Context context, AttributeSet attrs, int defStyleAttr)
     {
         super(context, attrs, defStyleAttr);
         this.context = context;
@@ -119,7 +119,7 @@ public class TouchSlotLayout extends RelativeLayout
 
         for (int i = bundleList.size() - 1; i >= 0; i--)
         {
-            slotViewList.get(i).restoreInstanceState(bundleList.get(i));
+            modelViewList.get(i).restoreInstanceState(bundleList.get(i));
         }
     }
 
@@ -135,7 +135,7 @@ public class TouchSlotLayout extends RelativeLayout
             bundleList.clear();
         }
 
-        for (TouchSlotView slotView : slotViewList)
+        for (JigsawModelView slotView : modelViewList)
         {
             bundleList.add(slotView.saveInstanceState());
         }
@@ -151,7 +151,7 @@ public class TouchSlotLayout extends RelativeLayout
             popupWindow = new JigsawPopupWindow(context);
         }
         boundaryList = new ArrayList<>();
-        slotViewList = new ArrayList<>();
+        modelViewList = new ArrayList<>();
         bundleList = new ArrayList<>();
     }
 
@@ -184,7 +184,7 @@ public class TouchSlotLayout extends RelativeLayout
             public void onItemClick(View view, int position, GPUImageFilter filter)
             {
                 // 设置当前选中的Filter的position
-                curSlotView.setCurFilterPosition(position);
+                curModelView.setCurFilterPosition(position);
 
                 if (null != onFilterItemClickListener)
                 {
@@ -263,8 +263,8 @@ public class TouchSlotLayout extends RelativeLayout
                 {
                     curSelection = position;
                     curRect = boundaryList.get(position);
-                    curSlotView = slotViewList.get(position);
-                    curSlotView.setIsDrawBoundary(true);
+                    curModelView = modelViewList.get(position);
+                    curModelView.setIsDrawBoundary(true);
                 }
             }
         }
@@ -309,10 +309,10 @@ public class TouchSlotLayout extends RelativeLayout
             // 隐藏悬浮窗
             dismissPopup();
 
-            for(TouchSlotView touchSlotView : slotViewList)
+            for(JigsawModelView jigsawModelView : modelViewList)
             {
-                touchSlotView.setIsDrawBoundary(false);
-                touchSlotView.invalidate();
+                jigsawModelView.setIsDrawBoundary(false);
+                jigsawModelView.invalidate();
             }
         }
     }
@@ -333,12 +333,12 @@ public class TouchSlotLayout extends RelativeLayout
      */
     public void replaceSelectedBitmap(String path)
     {
-        if (null != curSlotView)
+        if (null != curModelView)
         {
-            curSlotView.resetOriginBitmap();
-            curSlotView.setCurFilterPosition(0);
+            curModelView.resetOriginBitmap();
+            curModelView.setCurFilterPosition(0);
             // 加载图片
-            Glide.with(context).load(path).asBitmap().into(curSlotView);
+            Glide.with(context).load(path).asBitmap().into(curModelView);
         }
     }
 
@@ -348,7 +348,7 @@ public class TouchSlotLayout extends RelativeLayout
      */
     public void renderSelectedBitmap(Bitmap bitmap)
     {
-        curSlotView.setImageBitmap(bitmap);
+        curModelView.setImageBitmap(bitmap);
     }
 
     /**
@@ -357,7 +357,7 @@ public class TouchSlotLayout extends RelativeLayout
      */
     public Bitmap getSelectedBitmap()
     {
-        return curSlotView.getOriginBitmap();
+        return curModelView.getOriginBitmap();
     }
 
 
@@ -380,13 +380,13 @@ public class TouchSlotLayout extends RelativeLayout
             boundaryList.clear();
         }
 
-        if (null == slotViewList)
+        if (null == modelViewList)
         {
-            slotViewList = new ArrayList<>();
+            modelViewList = new ArrayList<>();
         }
         else
         {
-            slotViewList.clear();
+            modelViewList.clear();
         }
 
         // remove all views before add
@@ -395,7 +395,7 @@ public class TouchSlotLayout extends RelativeLayout
         int left, top, right, bottom;
         for (int i = 0; i < imagePaths.size(); i++)
         {
-            TouchSlotView singleTouchView = new TouchSlotView(context);
+            JigsawModelView singleTouchView = new JigsawModelView(context);
 
             left = (int) ((Float.parseFloat(positionList.get(i * 4).split(":")[0])) * width);
             top = (int) ((Float.parseFloat(positionList.get(i * 4).split(":")[1])) * height);
@@ -419,7 +419,7 @@ public class TouchSlotLayout extends RelativeLayout
 
             // view 边界加入list中
             boundaryList.add(new Rect(left, top, right, bottom));
-            slotViewList.add(singleTouchView);
+            modelViewList.add(singleTouchView);
         }
     }
 
@@ -432,9 +432,9 @@ public class TouchSlotLayout extends RelativeLayout
             if(null != popupWindow)
             {
                 // 显示弹窗
-                popupWindow.showAsDropDown(curSlotView);
+                popupWindow.showAsDropDown(curModelView);
                 // 设置当前选中的position位置
-                popupWindow.setSelectedFilterPosition(curSlotView.getCurFilterPosition());
+                popupWindow.setSelectedFilterPosition(curModelView.getCurFilterPosition());
                 // 设置当前的显示状态
                 showSelected = true;
             }
@@ -448,7 +448,7 @@ public class TouchSlotLayout extends RelativeLayout
         public boolean onLongClick(View v)
         {
             // 获取影像
-            Bitmap bm = curSlotView.getDrawingCacheBitmap();
+            Bitmap bm = curModelView.getDrawingCacheBitmap();
             // 初始化参数
             winViewX = downX - v.getLeft();
             winViewY = downY - v.getTop();
@@ -456,7 +456,7 @@ public class TouchSlotLayout extends RelativeLayout
             // 开始拖拽
             startDrag(bm, windowX, windowY);
             // 隐藏当前图片
-            ViewUtils.viewFadeOut(context, curSlotView, 0);
+            ViewUtils.viewFadeOut(context, curModelView, 0);
             // 设置拖动标志位
             isMoving = true;
 
@@ -575,7 +575,7 @@ public class TouchSlotLayout extends RelativeLayout
         }
 
         // 显示之前隐藏的view
-        ViewUtils.viewFadeIn(context, curSlotView, 0);
+        ViewUtils.viewFadeIn(context, curModelView, 0);
         // 设置拖动标志位
         isMoving = false;
     }
@@ -590,18 +590,18 @@ public class TouchSlotLayout extends RelativeLayout
         // 交换两个位置的图片
         Collections.swap(imagePaths, i, j);
 
-        TouchSlotView touchSlotView;
+        JigsawModelView jigsawModelView;
         // 设置position i
-        touchSlotView = slotViewList.get(i);
-        touchSlotView.resetOriginBitmap();
-        touchSlotView.setCurFilterPosition(0);
-        Glide.with(context).load(imagePaths.get(i)).asBitmap().into(touchSlotView);
+        jigsawModelView = modelViewList.get(i);
+        jigsawModelView.resetOriginBitmap();
+        jigsawModelView.setCurFilterPosition(0);
+        Glide.with(context).load(imagePaths.get(i)).asBitmap().into(jigsawModelView);
 
         // 设置position j
-        touchSlotView = slotViewList.get(j);
-        touchSlotView.resetOriginBitmap();
-        touchSlotView.setCurFilterPosition(0);
-        Glide.with(context).load(imagePaths.get(j)).asBitmap().into(touchSlotView);
+        jigsawModelView = modelViewList.get(j);
+        jigsawModelView.resetOriginBitmap();
+        jigsawModelView.setCurFilterPosition(0);
+        Glide.with(context).load(imagePaths.get(j)).asBitmap().into(jigsawModelView);
     }
 
     /**

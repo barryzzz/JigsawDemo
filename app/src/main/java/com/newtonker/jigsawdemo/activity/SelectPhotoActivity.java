@@ -27,11 +27,10 @@ import com.newtonker.jigsawdemo.model.Photo;
 import com.newtonker.jigsawdemo.model.PhotoDirectory;
 import com.newtonker.jigsawdemo.utils.MediaStoreHelper;
 import com.newtonker.jigsawdemo.utils.TemplateUtils;
-import com.newtonker.jigsawdemo.widget.TouchSlotLayout;
+import com.newtonker.jigsawdemo.widget.JigsawModelLayout;
 
 import java.util.ArrayList;
 import java.util.List;
-
 
 /**
  * 选择图片生成模版Activity
@@ -144,7 +143,7 @@ public class SelectPhotoActivity extends AppCompatActivity
                 // 刷新拼图列表
                 jigsawType = TemplateUtils.getJigsawType(selectedPhotosPath.size());
 
-                List<TouchSlotLayout> models = TemplateUtils.getSlotLayoutList(SelectPhotoActivity.this, jigsawType, selectedPhotosPath);
+                List<JigsawModelLayout> models = TemplateUtils.getSlotLayoutList(SelectPhotoActivity.this, jigsawType, selectedPhotosPath);
 
                 modelLinearAdapter.setModels(models);
                 modelLinearAdapter.notifyDataSetChanged();

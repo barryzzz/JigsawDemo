@@ -39,7 +39,7 @@ import android.widget.ImageView;
 import android.widget.OverScroller;
 import android.widget.Scroller;
 
-public class TouchSlotView extends ImageView
+public class JigsawModelView extends ImageView
 {
     //
     // SuperMin and SuperMax multipliers. Determine how much the image can be
@@ -75,6 +75,12 @@ public class TouchSlotView extends ImageView
     private float superMaxScale;
     private float[] m;
 
+    // modify by newtonker
+    private int curFilterPosition = 0;
+    private boolean isDrawBoundary = false;
+    private Paint boundaryPaint;
+    private Bitmap originBitmap;
+
     private Context context;
     private Fling fling;
 
@@ -102,25 +108,19 @@ public class TouchSlotView extends ImageView
     private OnTouchListener userTouchListener = null;
     private OnTouchImageViewListener touchImageViewListener = null;
 
-    // modify by newtonker
-    private int curFilterPosition = 0;
-    private boolean isDrawBoundary = false;
-    private Paint boundaryPaint;
-    private Bitmap originBitmap;
-
-    public TouchSlotView(Context context)
+    public JigsawModelView(Context context)
     {
         super(context);
         sharedConstructing(context);
     }
 
-    public TouchSlotView(Context context, AttributeSet attrs)
+    public JigsawModelView(Context context, AttributeSet attrs)
     {
         super(context, attrs);
         sharedConstructing(context);
     }
 
-    public TouchSlotView(Context context, AttributeSet attrs, int defStyle)
+    public JigsawModelView(Context context, AttributeSet attrs, int defStyle)
     {
         super(context, attrs, defStyle);
         sharedConstructing(context);
@@ -150,9 +150,10 @@ public class TouchSlotView extends ImageView
         onDrawReady = false;
         super.setOnTouchListener(new PrivateOnTouchListener());
 
-        // modify by newtonker
+        // add by newtonker
         boundaryPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        boundaryPaint.setStrokeWidth(6.0f); // 线宽
+        // 线宽
+        boundaryPaint.setStrokeWidth(8.0f);
         boundaryPaint.setStyle(Paint.Style.STROKE);
     }
 
@@ -299,7 +300,6 @@ public class TouchSlotView extends ImageView
     }
 
     /**
-     * modify by newtonker
      * 点击home键时，保存状态
      *
      * @return
@@ -307,7 +307,6 @@ public class TouchSlotView extends ImageView
     public Bundle saveInstanceState()
     {
         Bundle bundle = new Bundle();
-        //        bundle.putParcelable("instanceState", super.onSaveInstanceState());
         bundle.putFloat("saveScale", normalizedScale);
         bundle.putFloat("matchViewHeight", matchViewHeight);
         bundle.putFloat("matchViewWidth", matchViewWidth);
@@ -324,7 +323,6 @@ public class TouchSlotView extends ImageView
     }
 
     /**
-     * modify by newtonker
      * 返回时，恢复状态
      *
      * @return
@@ -375,19 +373,17 @@ public class TouchSlotView extends ImageView
 
         super.onDraw(canvas);
 
-        // modify by newtonker
+        // add by newtonker
         if (isDrawBoundary)
         {
-            boundaryPaint.setColor(Color.GREEN); // 黄色画笔
-            boundaryPaint.setStrokeWidth(6.0f); // 线宽
-            boundaryPaint.setStyle(Paint.Style.STROKE);
+            // 黄色
+            boundaryPaint.setColor(Color.YELLOW);
             canvas.drawRect(0.0f, 0.0f, getWidth(), getHeight(), boundaryPaint);
         }
         else
         {
-            boundaryPaint.setColor(Color.TRANSPARENT); // 黄色画笔
-            boundaryPaint.setStrokeWidth(6.0f); // 线宽
-            boundaryPaint.setStyle(Paint.Style.STROKE);
+            // 透明
+            boundaryPaint.setColor(Color.TRANSPARENT);
             canvas.drawRect(0.0f, 0.0f, getWidth(), getHeight(), boundaryPaint);
         }
     }
@@ -400,7 +396,6 @@ public class TouchSlotView extends ImageView
     }
 
     /**
-     * modify by newtonker
      * 设置是否绘制边界
      *
      * @param isDrawBoundary
@@ -456,7 +451,8 @@ public class TouchSlotView extends ImageView
 
             if (drawable.getIntrinsicWidth() <= 0 || drawable.getIntrinsicHeight() <= 0)
             {
-                originBitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888); // Single color bitmap will be created of 1x1 pixel
+                // Single color bitmap will be created of 1x1 pixel
+                originBitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888);
             }
             else
             {
@@ -624,7 +620,7 @@ public class TouchSlotView extends ImageView
      *
      * @param img
      */
-    public void setZoom(TouchSlotView img)
+    public void setZoom(JigsawModelView img)
     {
         PointF center = img.getScrollPosition();
         setZoom(img.getCurrentZoom(), center.x, center.y, img.getScaleType());
