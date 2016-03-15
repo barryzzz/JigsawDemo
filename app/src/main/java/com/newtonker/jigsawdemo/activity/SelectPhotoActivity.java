@@ -42,6 +42,8 @@ import java.util.List;
  */
 public class SelectPhotoActivity extends AppCompatActivity
 {
+    private static final int WRITE_REQUEST_CODE = 2909;
+
     // 拼图最多可用图片张数
     public final static int DEFAULT_MAX_COUNT = 4;
     public final static String SELECTED_PATHS = "selected_paths";
@@ -71,7 +73,7 @@ public class SelectPhotoActivity extends AppCompatActivity
         {
             if (!Settings.System.canWrite(this))
             {
-                requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, 2909);
+                requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, WRITE_REQUEST_CODE);
             }
             else
             {
@@ -114,14 +116,10 @@ public class SelectPhotoActivity extends AppCompatActivity
     {
         switch (requestCode)
         {
-        case 2909:
+        case WRITE_REQUEST_CODE:
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED)
             {
                 init();
-            }
-            else
-            {
-                Log.e("Permission", "Denied");
             }
             break;
         default:
