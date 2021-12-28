@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.PixelFormat;
 import android.graphics.Rect;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.AttributeSet;
@@ -22,14 +23,14 @@ import com.newtonker.jigsawdemo.event.OnItemClickListener;
 import com.newtonker.jigsawdemo.model.TemplateEntity;
 import com.newtonker.jigsawdemo.utils.ViewUtils;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import jp.co.cyberagent.android.gpuimage.GPUImageFilter;
 
-public class JigsawModelLayout extends RelativeLayout
-{
+public class JigsawModelLayout extends RelativeLayout {
     private static final float DRAG_SCALE = 1.05f;
 
     private Context context;
@@ -73,8 +74,7 @@ public class JigsawModelLayout extends RelativeLayout
     private WindowManager windowManager;
     private WindowManager.LayoutParams windowParams;
 
-    public JigsawModelLayout(Context context)
-    {
+    public JigsawModelLayout(Context context) {
         super(context);
         this.context = context;
         LayoutInflater.from(context).inflate(R.layout.touch_slot_layout, this);
@@ -85,8 +85,7 @@ public class JigsawModelLayout extends RelativeLayout
     // 这个构造方法在显示一组拼图列表时使用
     // 展示单个拼图模板，用其他三个
     // 当显示一组拼图列表时，如果初始化popupWindow，比较耗时，会出错
-    public JigsawModelLayout(Context context, boolean showPopup)
-    {
+    public JigsawModelLayout(Context context, boolean showPopup) {
         super(context);
         this.context = context;
         LayoutInflater.from(context).inflate(R.layout.touch_slot_layout, this);
@@ -94,8 +93,7 @@ public class JigsawModelLayout extends RelativeLayout
         init(showPopup);
     }
 
-    public JigsawModelLayout(Context context, AttributeSet attrs)
-    {
+    public JigsawModelLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.context = context;
         LayoutInflater.from(context).inflate(R.layout.touch_slot_layout, this);
@@ -103,8 +101,7 @@ public class JigsawModelLayout extends RelativeLayout
         init(true);
     }
 
-    public JigsawModelLayout(Context context, AttributeSet attrs, int defStyleAttr)
-    {
+    public JigsawModelLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         this.context = context;
         LayoutInflater.from(context).inflate(R.layout.touch_slot_layout, this);
@@ -113,40 +110,31 @@ public class JigsawModelLayout extends RelativeLayout
     }
 
     @Override
-    protected void onRestoreInstanceState(Parcelable state)
-    {
+    protected void onRestoreInstanceState(Parcelable state) {
         super.onRestoreInstanceState(state);
 
-        for (int i = bundleList.size() - 1; i >= 0; i--)
-        {
+        for (int i = bundleList.size() - 1; i >= 0; i--) {
             modelViewList.get(i).restoreInstanceState(bundleList.get(i));
         }
     }
 
     @Override
-    protected Parcelable onSaveInstanceState()
-    {
-        if (null == bundleList)
-        {
+    protected Parcelable onSaveInstanceState() {
+        if (null == bundleList) {
             bundleList = new ArrayList<>();
-        }
-        else
-        {
+        } else {
             bundleList.clear();
         }
 
-        for (JigsawModelView slotView : modelViewList)
-        {
+        for (JigsawModelView slotView : modelViewList) {
             bundleList.add(slotView.saveInstanceState());
         }
 
         return super.onSaveInstanceState();
     }
 
-    private void init(Boolean showPopup)
-    {
-        if(showPopup)
-        {
+    private void init(Boolean showPopup) {
+        if (showPopup) {
             // 初始化popupwindow
             popupWindow = new JigsawPopupWindow(context);
         }
@@ -158,10 +146,8 @@ public class JigsawModelLayout extends RelativeLayout
     /**
      * 隐藏弹窗
      */
-    public void dismissPopup()
-    {
-        if (null != popupWindow && popupWindow.isShowing())
-        {
+    public void dismissPopup() {
+        if (null != popupWindow && popupWindow.isShowing()) {
             popupWindow.dismiss();
         }
     }
@@ -171,23 +157,18 @@ public class JigsawModelLayout extends RelativeLayout
      *
      * @param onFilterItemClickListener
      */
-    public void setOnPopupFilterItemClickListener(final OnFilterItemClickListener onFilterItemClickListener)
-    {
-        if(null == popupWindow)
-        {
+    public void setOnPopupFilterItemClickListener(final OnFilterItemClickListener onFilterItemClickListener) {
+        if (null == popupWindow) {
             return;
         }
 
-        popupWindow.setOnFilterItemClickListener(new OnFilterItemClickListener()
-        {
+        popupWindow.setOnFilterItemClickListener(new OnFilterItemClickListener() {
             @Override
-            public void onItemClick(View view, int position, GPUImageFilter filter)
-            {
+            public void onItemClick(View view, int position, GPUImageFilter filter) {
                 // 设置当前选中的Filter的position
                 curModelView.setCurFilterPosition(position);
 
-                if (null != onFilterItemClickListener)
-                {
+                if (null != onFilterItemClickListener) {
                     onFilterItemClickListener.onItemClick(view, position, filter);
                 }
             }
@@ -199,20 +180,15 @@ public class JigsawModelLayout extends RelativeLayout
      *
      * @param onItemClickListener
      */
-    public void setOnPopupSelectListener(final OnItemClickListener onItemClickListener)
-    {
-        if(null == popupWindow)
-        {
+    public void setOnPopupSelectListener(final OnItemClickListener onItemClickListener) {
+        if (null == popupWindow) {
             return;
         }
 
-        popupWindow.setSelectListener(new OnClickListener()
-        {
+        popupWindow.setSelectListener(new OnClickListener() {
             @Override
-            public void onClick(View v)
-            {
-                if (null != onItemClickListener)
-                {
+            public void onClick(View v) {
+                if (null != onItemClickListener) {
                     onItemClickListener.onItemClick(v, curSelection);
                 }
             }
@@ -224,10 +200,8 @@ public class JigsawModelLayout extends RelativeLayout
      *
      * @param paths
      */
-    public void setImagePathList(List<String> paths)
-    {
-        if (null != paths)
-        {
+    public void setImagePathList(List<String> paths) {
+        if (null != paths) {
             imagePaths = paths;
         }
     }
@@ -237,30 +211,24 @@ public class JigsawModelLayout extends RelativeLayout
      *
      * @param entity
      */
-    public void setTemplateEntity(TemplateEntity entity)
-    {
-        if (null != entity)
-        {
+    public void setTemplateEntity(TemplateEntity entity) {
+        if (null != entity) {
             positionList = str2Coor(entity.getPoints(), entity.getPolygons());
         }
     }
 
     @Override
-    public boolean onInterceptTouchEvent(MotionEvent ev)
-    {
-        if(MotionEvent.ACTION_DOWN == ev.getAction())
-        {
+    public boolean onInterceptTouchEvent(MotionEvent ev) {
+        if (MotionEvent.ACTION_DOWN == ev.getAction()) {
             downX = (int) ev.getX();
             downY = (int) ev.getY();
             windowX = (int) ev.getRawX();
             windowY = (int) ev.getRawY();
 
             // 显示悬浮窗
-            if (null == curRect || !curRect.contains(downX, downY) || (null != popupWindow && !popupWindow.isShowing()))
-            {
+            if (null == curRect || !curRect.contains(downX, downY) || (null != popupWindow && !popupWindow.isShowing())) {
                 int position = pointToPosition(downX, downY);
-                if(position >= 0)
-                {
+                if (position >= 0) {
                     curSelection = position;
                     curRect = boundaryList.get(position);
                     curModelView = modelViewList.get(position);
@@ -274,19 +242,17 @@ public class JigsawModelLayout extends RelativeLayout
 
     /**
      * 当前移动点所对应的位置
+     *
      * @param x
      * @param y
      * @return
      */
-    private int pointToPosition(int x, int y)
-    {
+    private int pointToPosition(int x, int y) {
         int targetPosition = -1;
 
-        for (int i = boundaryList.size() - 1; i >= 0; i--)
-        {
+        for (int i = boundaryList.size() - 1; i >= 0; i--) {
             Rect rect = boundaryList.get(i);
-            if (rect.contains(x, y))
-            {
+            if (rect.contains(x, y)) {
                 targetPosition = i;
 
                 break;
@@ -298,19 +264,17 @@ public class JigsawModelLayout extends RelativeLayout
 
     /**
      * 设置是否显示选中状态
+     *
      * @param showSelected
      */
-    public void setShowSelectedState(boolean showSelected)
-    {
+    public void setShowSelectedState(boolean showSelected) {
         this.showSelected = showSelected;
 
-        if(!showSelected)
-        {
+        if (!showSelected) {
             // 隐藏悬浮窗
             dismissPopup();
 
-            for(JigsawModelView jigsawModelView : modelViewList)
-            {
+            for (JigsawModelView jigsawModelView : modelViewList) {
                 jigsawModelView.setIsDrawBoundary(false);
                 jigsawModelView.invalidate();
             }
@@ -319,10 +283,10 @@ public class JigsawModelLayout extends RelativeLayout
 
     /**
      * 获取当前的选中状态
+     *
      * @return
      */
-    public boolean getShowSelectedState()
-    {
+    public boolean getShowSelectedState() {
         return showSelected;
     }
 
@@ -331,10 +295,8 @@ public class JigsawModelLayout extends RelativeLayout
      *
      * @param path
      */
-    public void replaceSelectedBitmap(String path)
-    {
-        if (null != curModelView)
-        {
+    public void replaceSelectedBitmap(String path) {
+        if (null != curModelView) {
             curModelView.resetOriginBitmap();
             curModelView.setCurFilterPosition(0);
             // 加载图片
@@ -344,19 +306,19 @@ public class JigsawModelLayout extends RelativeLayout
 
     /**
      * 渲染当前选中的图片
+     *
      * @param bitmap
      */
-    public void renderSelectedBitmap(Bitmap bitmap)
-    {
+    public void renderSelectedBitmap(Bitmap bitmap) {
         curModelView.setImageBitmap(bitmap);
     }
 
     /**
      * 获取当前选中组件中的图片
+     *
      * @return
      */
-    public Bitmap getSelectedBitmap()
-    {
+    public Bitmap getSelectedBitmap() {
         return curModelView.getOriginBitmap();
     }
 
@@ -364,28 +326,20 @@ public class JigsawModelLayout extends RelativeLayout
     /**
      * 重绘拼图界面
      */
-    public void reDraw(int width, int height)
-    {
-        if (null == positionList || null == imagePaths || 0 == width || 0 == height)
-        {
+    public void reDraw(int width, int height) {
+        if (null == positionList || null == imagePaths || 0 == width || 0 == height) {
             return;
         }
 
-        if (null == boundaryList)
-        {
+        if (null == boundaryList) {
             boundaryList = new ArrayList<>();
-        }
-        else
-        {
+        } else {
             boundaryList.clear();
         }
 
-        if (null == modelViewList)
-        {
+        if (null == modelViewList) {
             modelViewList = new ArrayList<>();
-        }
-        else
-        {
+        } else {
             modelViewList.clear();
         }
 
@@ -393,8 +347,7 @@ public class JigsawModelLayout extends RelativeLayout
         this.removeAllViews();
 
         int left, top, right, bottom;
-        for (int i = 0; i < imagePaths.size(); i++)
-        {
+        for (int i = 0; i < imagePaths.size(); i++) {
             JigsawModelView singleTouchView = new JigsawModelView(context);
 
             left = (int) ((Float.parseFloat(positionList.get(i * 4).split(":")[0])) * width);
@@ -415,7 +368,9 @@ public class JigsawModelLayout extends RelativeLayout
 
             this.addView(singleTouchView);
             // 加载图片
-            Glide.with(context).load(imagePaths.get(i)).asBitmap().into(singleTouchView);
+            File file = new File(imagePaths.get(i));
+            Uri uri = Uri.fromFile(file);
+            Glide.with(context).load(uri).asBitmap().into(singleTouchView);
 
             // view 边界加入list中
             boundaryList.add(new Rect(left, top, right, bottom));
@@ -424,13 +379,10 @@ public class JigsawModelLayout extends RelativeLayout
     }
 
     // 单个图片的单击后弹窗
-    private OnClickListener itemOnClickListener = new OnClickListener()
-    {
+    private OnClickListener itemOnClickListener = new OnClickListener() {
         @Override
-        public void onClick(View v)
-        {
-            if(null != popupWindow)
-            {
+        public void onClick(View v) {
+            if (null != popupWindow) {
                 // 显示弹窗
                 popupWindow.showAsDropDown(curModelView);
                 // 设置当前选中的position位置
@@ -442,11 +394,9 @@ public class JigsawModelLayout extends RelativeLayout
     };
 
     // 单个图片长按侦听
-    private OnLongClickListener itemOnLongClickListener = new OnLongClickListener()
-    {
+    private OnLongClickListener itemOnLongClickListener = new OnLongClickListener() {
         @Override
-        public boolean onLongClick(View v)
-        {
+        public boolean onLongClick(View v) {
             // 获取影像
             Bitmap bm = curModelView.getDrawingCacheBitmap();
             // 初始化参数
@@ -466,12 +416,12 @@ public class JigsawModelLayout extends RelativeLayout
 
     /**
      * 拖拽开始
+     *
      * @param bm
      * @param x
      * @param y
      */
-    private void startDrag(Bitmap bm, int x, int y)
-    {
+    private void startDrag(Bitmap bm, int x, int y) {
         stopDrag();
         // 获取windows界面
         windowParams = new WindowManager.LayoutParams();
@@ -499,43 +449,38 @@ public class JigsawModelLayout extends RelativeLayout
     /**
      * 拖拽结束
      */
-    private void stopDrag()
-    {
-        if(null != dragImageView)
-        {
+    private void stopDrag() {
+        if (null != dragImageView) {
             windowManager.removeView(dragImageView);
             dragImageView = null;
         }
     }
 
     @Override
-    public boolean onTouchEvent(MotionEvent ev)
-    {
-        if(null != dragImageView)
-        {
+    public boolean onTouchEvent(MotionEvent ev) {
+        if (null != dragImageView) {
             int x = (int) ev.getX();
             int y = (int) ev.getY();
 
-            switch (ev.getAction())
-            {
-            case MotionEvent.ACTION_DOWN:
-                downX = (int) ev.getX();
-                downY = (int) ev.getY();
-                windowX = (int) ev.getRawX();
-                windowY = (int) ev.getRawY();
-                return true;
+            switch (ev.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    downX = (int) ev.getX();
+                    downY = (int) ev.getY();
+                    windowX = (int) ev.getRawX();
+                    windowY = (int) ev.getRawY();
+                    return true;
 
-            case MotionEvent.ACTION_MOVE:
-                onDrag((int) ev.getRawX(), (int) ev.getRawY());
-                return true;
+                case MotionEvent.ACTION_MOVE:
+                    onDrag((int) ev.getRawX(), (int) ev.getRawY());
+                    return true;
 
-            case MotionEvent.ACTION_UP:
-                stopDrag();
-                onDrop(x, y);
-                return true;
+                case MotionEvent.ACTION_UP:
+                    stopDrag();
+                    onDrop(x, y);
+                    return true;
 
-            default:
-                break;
+                default:
+                    break;
             }
         }
         return super.onTouchEvent(ev);
@@ -543,13 +488,12 @@ public class JigsawModelLayout extends RelativeLayout
 
     /**
      * 设置拖拽view的位置
+     *
      * @param rawX
      * @param rawY
      */
-    private void onDrag(int rawX, int rawY)
-    {
-        if(null != dragImageView)
-        {
+    private void onDrag(int rawX, int rawY) {
+        if (null != dragImageView) {
             windowParams.alpha = 0.6f;
             windowParams.x = rawX - winViewX;
             windowParams.y = rawY - winViewY;
@@ -560,16 +504,15 @@ public class JigsawModelLayout extends RelativeLayout
 
     /**
      * 松开手之后判断是否要交换
+     *
      * @param x
      * @param y
      */
-    private void onDrop(int x, int y)
-    {
+    private void onDrop(int x, int y) {
         // 判断是否需要交换
         int position = pointToPosition(x, y);
 
-        if(position >=0 && position != curSelection)
-        {
+        if (position >= 0 && position != curSelection) {
             // 交换
             exchangeViews(position, curSelection);
         }
@@ -582,11 +525,11 @@ public class JigsawModelLayout extends RelativeLayout
 
     /**
      * 交换两个view的图片
+     *
      * @param i
      * @param j
      */
-    private void exchangeViews(int i, int j)
-    {
+    private void exchangeViews(int i, int j) {
         // 交换两个位置的图片
         Collections.swap(imagePaths, i, j);
 
@@ -611,26 +554,22 @@ public class JigsawModelLayout extends RelativeLayout
      * @param polygonsString 解析XML获取的polygons标签的字符串
      * @return 同一个slot下其中一个模版所有图片的位置集合
      */
-    private List<String> str2Coor(String pointsString, String polygonsString)
-    {
+    private List<String> str2Coor(String pointsString, String polygonsString) {
         List<String> coordinateStringList = new ArrayList<>();
         // 0:0 0.5:0 1:0 0:1 0.5:1 1:1
         String[] pointsStr = pointsString.split(",");
         // 0,1,4,3 1,2,5,4
         String[] polygonsStr = polygonsString.split("/");
         // 将环绕规则的字符串转成Int,作为判断坐标的角标
-        for (String pStr : polygonsStr)
-        {
+        for (String pStr : polygonsStr) {
             // "0" "1" "4" "3"
             String[] cStr = pStr.split(",");
             // 0 1 4 3
             int[] cInt = new int[cStr.length];
-            for (int i = 0; i < cInt.length; i++)
-            {
+            for (int i = 0; i < cInt.length; i++) {
                 cInt[i] = Integer.parseInt(cStr[i]);
             }
-            for (int pInt : cInt)
-            {
+            for (int pInt : cInt) {
                 // "0:0" "0.5:0" "0.5:1" "0:1"
                 coordinateStringList.add(pointsStr[pInt]);
             }

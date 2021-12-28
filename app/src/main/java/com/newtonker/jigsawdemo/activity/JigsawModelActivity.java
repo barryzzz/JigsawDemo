@@ -40,8 +40,7 @@ import jp.co.cyberagent.android.gpuimage.GPUImageFilter;
 /**
  * 单个拼图模板修饰界面
  */
-public class JigsawModelActivity extends Activity
-{
+public class JigsawModelActivity extends Activity {
     private static final int PHOTO_PICKED_WITH_DATA = 1000;
     // 拼图为正方形，宽高比为1.0f
     private static final float JIGSAW_MODEL_RATIO = 1.0f;
@@ -59,8 +58,7 @@ public class JigsawModelActivity extends Activity
     private RelativeLayout modelAreaParent;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_single_model);
 
@@ -72,22 +70,17 @@ public class JigsawModelActivity extends Activity
         initView();
     }
 
-    private void reDrawModelArea()
-    {
-        if (0 != modelAreaParentWidth && 0 != modelAreaParentHeight)
-        {
+    private void reDrawModelArea() {
+        if (0 != modelAreaParentWidth && 0 != modelAreaParentHeight) {
             float ratio = ((float) modelAreaParentWidth) / modelAreaParentHeight;
 
             int modelAreaWidth;
             int modelAreaHeight;
 
-            if (JIGSAW_MODEL_RATIO > ratio)
-            {
+            if (JIGSAW_MODEL_RATIO > ratio) {
                 modelAreaWidth = modelAreaParentWidth;
                 modelAreaHeight = (int) (modelAreaParentWidth / JIGSAW_MODEL_RATIO);
-            }
-            else
-            {
+            } else {
                 modelAreaHeight = modelAreaParentHeight;
                 modelAreaWidth = (int) (modelAreaHeight * JIGSAW_MODEL_RATIO);
             }
@@ -103,15 +96,12 @@ public class JigsawModelActivity extends Activity
     /**
      * 初始化界面
      */
-    private void initView()
-    {
+    private void initView() {
         // 获取父类布局
         JigsawLinearLayout rootLayout = (JigsawLinearLayout) findViewById(R.id.root_layout);
-        rootLayout.setOnSelectedStateChangedListener(new JigsawLinearLayout.OnSelectedStateChangedListener()
-        {
+        rootLayout.setOnSelectedStateChangedListener(new JigsawLinearLayout.OnSelectedStateChangedListener() {
             @Override
-            public void onSelectedStateChanged()
-            {
+            public void onSelectedStateChanged() {
                 // 这里设置隐藏选中边框，不显示组件
                 modelArea.setShowSelectedState(false);
             }
@@ -124,11 +114,9 @@ public class JigsawModelActivity extends Activity
         modelArea.setImagePathList(selectedPaths);
         modelArea.setTemplateEntity(entity);
 
-        modelArea.setOnPopupSelectListener(new OnItemClickListener()
-        {
+        modelArea.setOnPopupSelectListener(new OnItemClickListener() {
             @Override
-            public void onItemClick(View view, int position)
-            {
+            public void onItemClick(View view, int position) {
                 curPosition = position;
                 // 跳出选图界面
                 Intent intent = new Intent(Intent.ACTION_PICK);
@@ -137,11 +125,9 @@ public class JigsawModelActivity extends Activity
             }
         });
 
-        modelArea.setOnPopupFilterItemClickListener(new OnFilterItemClickListener()
-        {
+        modelArea.setOnPopupFilterItemClickListener(new OnFilterItemClickListener() {
             @Override
-            public void onItemClick(View view, int position, GPUImageFilter filter)
-            {
+            public void onItemClick(View view, int position, GPUImageFilter filter) {
                 // 获取当前显示的图片
                 Bitmap bitmap = modelArea.getSelectedBitmap();
                 // 开启渲染
@@ -151,11 +137,9 @@ public class JigsawModelActivity extends Activity
 
         modelAreaParent = (RelativeLayout) findViewById(R.id.model_area_parent);
         final ViewTreeObserver observer = modelAreaParent.getViewTreeObserver();
-        observer.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener()
-        {
+        observer.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
             @Override
-            public boolean onPreDraw()
-            {
+            public boolean onPreDraw() {
                 modelAreaParent.getViewTreeObserver().removeOnPreDrawListener(this);
                 modelAreaParentWidth = modelAreaParent.getMeasuredWidth();
                 modelAreaParentHeight = modelAreaParent.getMeasuredHeight();
@@ -165,23 +149,19 @@ public class JigsawModelActivity extends Activity
             }
         });
 
-        ImageView backBtn = (ImageView)findViewById(R.id.editor_action_bar_back_btn);
-        backBtn.setOnClickListener(new View.OnClickListener()
-        {
+        ImageView backBtn = (ImageView) findViewById(R.id.editor_action_bar_back_btn);
+        backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v)
-            {
+            public void onClick(View v) {
                 // 退出
                 JigsawModelActivity.this.finish();
             }
         });
 
         TextView saveBtn = (TextView) findViewById(R.id.editor_action_bar_save_btn);
-        saveBtn.setOnClickListener(new View.OnClickListener()
-        {
+        saveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v)
-            {
+            public void onClick(View v) {
                 // 保存
                 new SavePictureTask().execute();
             }
@@ -189,69 +169,57 @@ public class JigsawModelActivity extends Activity
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data)
-    {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (resultCode != RESULT_OK)
-        {
+        if (resultCode != RESULT_OK) {
             return;
         }
 
-        switch (requestCode)
-        {
-        case PHOTO_PICKED_WITH_DATA:
-            String path = FileUtils.getPath(this, data.getData());
-            // 替代之前的图片路径
-            selectedPaths.add(curPosition, path);
-            selectedPaths.remove(curPosition + 1);
-            // 设置新的图片
-            modelArea.replaceSelectedBitmap(path);
-            break;
-        default:
-            break;
+        switch (requestCode) {
+            case PHOTO_PICKED_WITH_DATA:
+                String path = FileUtils.getPath(this, data.getData());
+                // 替代之前的图片路径
+                selectedPaths.add(curPosition, path);
+                selectedPaths.remove(curPosition + 1);
+                // 设置新的图片
+                modelArea.replaceSelectedBitmap(path);
+                break;
+            default:
+                break;
         }
     }
 
     @Override
-    public void onBackPressed()
-    {
-        if (modelArea.getShowSelectedState())
-        {
+    public void onBackPressed() {
+        if (modelArea.getShowSelectedState()) {
             modelArea.setShowSelectedState(false);
-        }
-        else
-        {
+        } else {
             super.onBackPressed();
         }
     }
 
     // 点击滤镜后的渲染
-    private class ImageRenderTask extends AsyncTask<Void, Void, Bitmap>
-    {
+    private class ImageRenderTask extends AsyncTask<Void, Void, Bitmap> {
         // 用于生成滤镜效果图片
         private GPUImage gpuImage;
         private Bitmap bitmap;
         private GPUImageFilter filter;
 
-        public ImageRenderTask(Bitmap bitmap, GPUImageFilter filter)
-        {
+        public ImageRenderTask(Bitmap bitmap, GPUImageFilter filter) {
             this.bitmap = bitmap;
             this.filter = filter;
         }
 
         @Override
-        protected void onPreExecute()
-        {
+        protected void onPreExecute() {
             // 先生成滤镜效果的主类
             gpuImage = new GPUImage(JigsawModelActivity.this);
         }
 
         @Override
-        protected Bitmap doInBackground(Void... params)
-        {
-            if (null == filter)
-            {
+        protected Bitmap doInBackground(Void... params) {
+            if (null == filter) {
                 return bitmap;
             }
 
@@ -261,10 +229,8 @@ public class JigsawModelActivity extends Activity
         }
 
         @Override
-        protected void onPostExecute(Bitmap bitmap)
-        {
-            if (null != bitmap)
-            {
+        protected void onPostExecute(Bitmap bitmap) {
+            if (null != bitmap) {
                 // 将获取的bitmap设置给当前的TouchSlotView
                 modelArea.renderSelectedBitmap(bitmap);
             }
@@ -273,14 +239,11 @@ public class JigsawModelActivity extends Activity
 
 
     // 保存图片的Task
-    private class SavePictureTask extends AsyncTask<Void, Void, String>
-    {
+    private class SavePictureTask extends AsyncTask<Void, Void, String> {
         @Override
-        protected String doInBackground(Void... params)
-        {
+        protected String doInBackground(Void... params) {
             String filePath = null;
-            try
-            {
+            try {
                 //获取图片
                 Bitmap targetBitmap = FileUtils.createBitmapFromView(modelArea);
                 // 保存图片到本地
@@ -290,25 +253,19 @@ public class JigsawModelActivity extends Activity
 
                 // 保存文件，返回路径
                 filePath = saveImage(FileConstants.JIGSAW_DIR, fileName, targetBitmap);
-            }
-            catch (Exception | OutOfMemoryError e)
-            {
+            } catch (Exception | OutOfMemoryError e) {
                 e.printStackTrace();
             }
             return filePath;
         }
 
         @Override
-        protected void onPostExecute(String path)
-        {
+        protected void onPostExecute(String path) {
             super.onPostExecute(path);
-            if (null == path)
-            {
+            if (null == path) {
                 // 保存失败
                 Toast.makeText(JigsawModelActivity.this, "Save Failed!", Toast.LENGTH_SHORT).show();
-            }
-            else
-            {
+            } else {
                 // 保存成功
                 Toast.makeText(JigsawModelActivity.this, "Save succeed! Path: " + path, Toast.LENGTH_SHORT).show();
             }
@@ -322,36 +279,30 @@ public class JigsawModelActivity extends Activity
      * @param fileName
      * @param bm
      */
-    private String saveImage(String folderName, String fileName, Bitmap bm)
-    {
-        if (null == bm)
-        {
+    private String saveImage(String folderName, String fileName, Bitmap bm) {
+        if (null == bm) {
             // 保存失败，直接返回
             return null;
         }
 
         // 先判断文件夹是否存在，不存在要先创建
         File dir = new File(folderName);
-        if (!dir.exists() && !dir.mkdirs())
-        {
+        if (!dir.exists() && !dir.mkdirs()) {
             return null;
         }
 
         File file = new File(dir, fileName);
         OutputStream out = null;
-        try
-        {
+        try {
             // 封装输出流
             out = new BufferedOutputStream(new FileOutputStream(file));
 
-            if (!bm.compress(Bitmap.CompressFormat.JPEG, 100, out))
-            {
+            if (!bm.compress(Bitmap.CompressFormat.JPEG, 100, out)) {
                 return null;
             }
 
             // 转换为数据流后回收bitmap
-            if (!bm.isRecycled())
-            {
+            if (!bm.isRecycled()) {
                 bm.recycle();
             }
 
@@ -362,23 +313,15 @@ public class JigsawModelActivity extends Activity
             JigsawModelActivity.this.sendBroadcast(mediaScannerIntent);
 
             return file.getAbsolutePath();
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
-        }
-        finally
-        {
-            try
-            {
-                if (null != out)
-                {
+        } finally {
+            try {
+                if (null != out) {
                     // 关闭输出流
                     out.close();
                 }
-            }
-            catch (IOException e)
-            {
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }
